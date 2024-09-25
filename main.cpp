@@ -7,10 +7,15 @@ using namespace std;
 
 
 // function to validate date format
-
+      bool validateDate (const string& date){
+      regex datePattern ("\\d{2}/\\d{2}/\\d{4}");
+          return regex_match(date, datePattern);
+      }
 
 //function to validate budget format 
-
+      bool validateBudget (double Budget){
+          return budget > 0;
+      }
 
 int main() {       
    
