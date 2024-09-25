@@ -4,7 +4,7 @@ using namespace std;
 
 int main() {       
    
-                                    //taking user info like destination,travel dates and budgets using std input
+    //taking user info like destination,travel dates and budgets using std input
     string destination;
     string travelDate;
     double budget;
