@@ -24,6 +24,10 @@ int main() {
         << " on " << travelDate
         << " with a budget of INR." << budget << "." << endl;
 
+cout << "Press Enter to exit...";       //Waits for the user to hit enter before exiting
+cin.ignore();                           //Clears input buffer
+cin.get();                              //Waits for Enter key
+
 return 0;
 }
 
