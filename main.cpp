@@ -1,9 +1,7 @@
 #include <iostream>
 #include <string>
-#include <regex >                  //for date validations DD/MM/YYYY format
+#include <regex>                  //for date validations DD/MM/YYYY format
 using namespace std;
-
-
 
 
 // function to validate date format
@@ -12,14 +10,14 @@ using namespace std;
           return regex_match(date, datePattern);
       }
 
-//function to validate budget format 
+//function to validate Budget format 
       bool validateBudget (double Budget){
-          return budget > 0;
+          return Budget > 0;
       }
 
 int main() {       
    
-    //taking user info like destination,travel dates and budgets using std input
+    //taking user info like destination,travel dates and Budgets using std input
     string destination;
     string travelDate;
     double budget;
@@ -28,16 +26,39 @@ int main() {
 
     cout << "Enter your Travel Destination: "; //take travel destination input
     getline(cin, destination);                //getline helps in accepting multi-line input 
+    
 
-    cout << "Enter your travel dates in format DD/MM/YYYY: "; //take travel date input
-    getline(cin, travelDate);
+    //input and validate travel date
+    bool validDate = false;
+    do {
+        cout << "Enter your travel dates in format DD/MM/YYYY: "; //take travel date input
+        getline(cin, travelDate);
+        if (!validateDate(travelDate)) {
+            cout << "Invalid date format! Please enter the date in format DD/MM/YYYY ";
+            }
+        else {
+            validDate = true;
+        }
+    } while (!validDate);
 
-    cout << "Enter your Budget (in INR): ";  // take budget input in INR
-    cin >> budget;
 
+    //input and validate Budget 
+    bool validBudget = false;
+    do {
+        cout << "Enter your Budget (in INR): ";  // take Budget input in INR
+        cin >> budget;
+        if (!validateBudget(budget)) {
+            cout << "Invalid budget! Please enter a positive value." << endl;
+        }
+        else {
+            validBudget = true;
+        }
+    } while (!validBudget);
+    
+    //Display user input after doing above validations of date and budget
     cout << "Hurray! You are planning to travel to " << destination  // displaying above user input or information collected on output screen to user
         << " on " << travelDate
-        << " with a budget of INR." << budget << "." << endl;
+        << " with a Budget of INR." << budget << "." << endl;
 
 cout << "Press Enter to exit...";       //Waits for the user to hit enter before exiting
 cin.ignore();                           //Clears input buffer
