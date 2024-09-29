@@ -4,6 +4,7 @@
 #include <tuple>
 #include <regex>
 #include <fstream>
+#include <iomanip>    //allows  to control how data is displayed or read in your programs
 
 using namespace std;
 
@@ -61,7 +62,7 @@ int main() {
     // Display previously loaded trips if any
     if (!trips.empty()) {
         cout << "\nPreviously Saved Trips:\n";
-        for (size_t i = 0; i < trips.size(); i++) {
+        for (size_t i = 0; i < trips.size(); ++i) {
             cout << "Trip " << (i + 1) << ": "
                 << "Destination: " << get<0>(trips[i]) << ", "
                 << "Date: " << get<1>(trips[i]) << ", "
@@ -70,50 +71,65 @@ int main() {
     }
 
     do {
-        //take travel destination input
-        cout << "Enter your Travel Destination: ";
-        cin.ignore();                              // clears the input buffer preventing issues with getline
-        getline(cin, destination);                //getline helps in accepting multi-line input 
+        // Take travel destination input
+        cout << "\nEnter your Travel Destination: ";
+        cin.ignore(); // Clears the input buffer to prevent issues with getline
+        getline(cin, destination); // Get the destination name (supports spaces)
 
-        //input and validate travel date
+        // Input and validate travel date
         bool validDate = false;
         do {
-            cout << "Enter your travel dates in format DD/MM/YYYY: "; //take travel date input
+            cout << "Enter your travel dates in format DD/MM/YYYY: "; // Take travel date input
             getline(cin, travelDate);
             if (!validateDate(travelDate)) {
-                cout << "Invalid date format! Please enter the date in format DD/MM/YYYY." << endl;;
+                cout << "Invalid date format! Please enter the date in format DD/MM/YYYY." << endl;
             }
             else {
                 validDate = true;
             }
         } while (!validDate);
 
-
-        //input and validate budget 
+        // Input and validate budget
         bool validBudget = false;
         do {
-            cout << "Enter your Budget (in INR): ";  // take Budget input in INR
+            cout << "Enter your Budget (in INR): "; // Take Budget input in INR
             cin >> budget;
             if (!validateBudget(budget)) {
                 cout << "Invalid budget! Please enter a positive value." << endl;
-
             }
             else {
                 validBudget = true;
             }
         } while (!validBudget);
 
-        // Store the trip details
-        trips.push_back(make_tuple(destination, travelDate, budget));
+        // Confirm trip details before saving
+        char confirm;
+        cout << "\nPlease review your trip details:" << endl;
+        cout << "Destination: " << destination << endl;
+        cout << "Travel Date: " << travelDate << endl;
+        cout << "Budget: INR " << fixed << setprecision(2) << budget << endl;
+        cout << "Are these details correct? (y/n): ";
+        cin >> confirm;
 
-        // Ask if user wants to add another trip
+        if (confirm == 'y' || confirm == 'Y') {
+            // Store the trip details
+            trips.push_back(make_tuple(destination, travelDate, budget));
+
+            // Display summary of the newly added trip
+            cout << "\nHurray! You are planning to travel to " << destination
+                << " on " << travelDate << " with a Budget of INR " << budget << "." << endl;
+        }
+        else {
+            cout << "Let's re-enter the trip details.\n";
+        }
+
+        // Ask if the user wants to add another trip
         cout << "Do you want to add another trip? (y/n): ";
         cin >> addMore;
 
     } while (addMore == 'y' || addMore == 'Y');
 
-    // Display a summary of all trips
-    cout << "\nSummary of Your Planned Trips:\n";
+    cout<< "\n Summary of Your Planned Trips \n"; // Display a summary of all trips
     for (size_t i = 0; i < trips.size(); ++i) {
         cout << "Trip " << (i + 1) << ": "
             << "Destination: " << get<0>(trips[i]) << ", "
@@ -123,6 +139,9 @@ int main() {
 
     // Save trips to file before exiting
     saveTrips(trips);
+    
+    //To avoid scientific notation and ensure budget is displayed as a regular decimal number 
+    cout << fixed << setprecision(2);
 
     //Display user input after doing above validations of date and budget
     cout << "\nHurray! You are planning to travel to " << destination << " on " << travelDate << " with a Budget of INR " << budget << "." << endl;
