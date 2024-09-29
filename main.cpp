@@ -124,10 +124,8 @@ int main() {
     // Save trips to file before exiting
     saveTrips(trips);
 
-
-
-
     //Display user input after doing above validations of date and budget
+    cout << "\nHurray! You are planning to travel to " << destination << " on " << travelDate << " with a Budget of INR " << budget << "." << endl;
 
 
     cout << "\nPress Enter to exit...";       //Waits for the user to hit enter before exiting
