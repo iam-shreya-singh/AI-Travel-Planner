@@ -73,7 +73,7 @@ int main() {
     do {
         // Take travel destination input
         cout << "\nEnter your Travel Destination: ";
-        cin.ignore(); // Clears the input buffer to prevent issues with getline
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clears the input buffer to prevent issues with getline
         getline(cin, destination); // Get the destination name (supports spaces)
 
         // Input and validate travel date
@@ -100,6 +100,8 @@ int main() {
             else {
                 validBudget = true;
             }
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear buffer before next getline
+
         } while (!validBudget);
 
         // Confirm trip details before saving
