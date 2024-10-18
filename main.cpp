@@ -4,14 +4,40 @@
 #include <tuple>
 #include <regex>
 #include <fstream>
-#include <iomanip>    //allows  to control how data is displayed or read in your programs
+#include <iomanip>    // Allows control of how data is displayed
 
 using namespace std;
 
-// function to validate date format
+// Function to validate date format, extract day, month, and year
 bool validateDate(const string& date) {
-    regex datePattern("\\d{2}/\\d{2}/\\d{4}");
-    return regex_match(date, datePattern);
+    regex datePattern(R"((\d{2})/(\d{2})/(\d{4}))");  // Regex pattern to extract day, month, year
+    smatch match;
+
+    if (!regex_match(date, match, datePattern)) {   // Check if input matches the pattern
+        return false;  // Invalid format
+    }
+
+    // Convert the strings into integers (day, month, year)
+    int day = stoi(match[1].str());
+    int month = stoi(match[2].str());
+    int year = stoi(match[3].str());
+
+    cout << "Day: " << day << ", Month: " << month << ", Year: " << year << endl;
+
+    // Check if the month is valid
+    if (month < 1 || month > 12) {
+        return false;  // Invalid month
+    }
+
+    // Check if the day is valid based on month and year
+    bool isLeapYear = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
+    int daysInMonth[] = { 31, (isLeapYear ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }; // Days per month
+
+    if (day < 1 || day > daysInMonth[month - 1]) {
+        return false; // Invalid day for the given month
+    }
+
+    return true; // Date is valid
 }
 
 // Function to validate budget (positive number)
@@ -19,7 +45,14 @@ bool validateBudget(double budget) {
     return budget > 0;
 }
 
-//Function to read trips data from trips.txt file
+// Function to trim leading and trailing whitespace
+string trim(const string& str) {
+    size_t first = str.find_first_not_of(' ');
+    size_t last = str.find_last_not_of(' ');
+    return (first == string::npos) ? "" : str.substr(first, last - first + 1);
+}
+
+// Function to read trips data from trips.txt file
 void loadTrips(vector<tuple<string, string, double>>& trips) {
     ifstream inFile("trips.txt");
     if (inFile) {
@@ -35,7 +68,7 @@ void loadTrips(vector<tuple<string, string, double>>& trips) {
     }
 }
 
-//Function to save trip data to trips.txt file
+// Function to save trip data to trips.txt file
 void saveTrips(const vector<tuple<string, string, double>>& trips) {
     ofstream outFile("trips.txt");
     for (const auto& trip : trips) {
@@ -48,18 +81,16 @@ void saveTrips(const vector<tuple<string, string, double>>& trips) {
 
 int main() {
 
-
-    vector <tuple<string, string, double>> trips;   // Vector to store multiple trip details
-    //taking user info like destination,travel dates and Budgets using std input
+    vector<tuple<string, string, double>> trips;   // Vector to store multiple trip details
     string destination, travelDate;
     double budget;
     char addMore;
 
-    //Load previously saved trips
+    // Load previously saved trips
     loadTrips(trips);
-    cout << "Welcome to the AI Travel Planner Project, WIP, stay-tuned !" << endl;  //Intro line for user
+    cout << "Welcome to the AI Travel Planner Project, WIP, stay-tuned!" << endl;
 
-    // Display previously loaded trips if any
+    // Display previously loaded trips (if any)
     if (!trips.empty()) {
         cout << "\nPreviously Saved Trips:\n";
         for (size_t i = 0; i < trips.size(); ++i) {
@@ -71,15 +102,17 @@ int main() {
     }
 
     do {
+        // Clear buffer before taking input for destination
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
         // Take travel destination input
         cout << "\nEnter your Travel Destination: ";
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clears the input buffer before taking destination input
-        getline(cin, destination); // Get the destination name (supports spaces)
+        getline(cin, destination);  // Get the destination name (supports spaces)
 
         // Input and validate travel date
         bool validDate = false;
         do {
-            cout << "Enter your travel dates in format DD/MM/YYYY: "; // Take travel date input
+            cout << "Enter your travel date in format DD/MM/YYYY: ";
             getline(cin, travelDate);
             if (!validateDate(travelDate)) {
                 cout << "Invalid date format! Please enter the date in format DD/MM/YYYY." << endl;
@@ -92,7 +125,7 @@ int main() {
         // Input and validate budget
         bool validBudget = false;
         do {
-            cout << "Enter your Budget (in INR): "; // Take Budget input in INR
+            cout << "Enter your Budget (in INR): ";
             cin >> budget;
 
             // Clear the buffer to ensure no leftover characters interfere with the next input
@@ -133,7 +166,7 @@ int main() {
 
     } while (addMore == 'y' || addMore == 'Y');
 
-    cout<< "\n Summary of Your Planned Trips \n"; // Display a summary of all trips
+    cout << "\nSummary of Your Planned Trips\n"; // Display a summary of all trips
     for (size_t i = 0; i < trips.size(); ++i) {
         cout << "Trip " << (i + 1) << ": "
             << "Destination: " << get<0>(trips[i]) << ", "
@@ -143,21 +176,11 @@ int main() {
 
     // Save trips to file before exiting
     saveTrips(trips);
-    
-    //To avoid scientific notation and ensure budget is displayed as a regular decimal number 
-    cout << fixed << setprecision(2);
 
-    //Display user input after doing above validations of date and budget
-    cout << "\nHurray! You are planning to travel to " << destination << " on " << travelDate << " with a Budget of INR " << budget << "." << endl;
-
-
-    cout << "\nPress Enter to exit...";       //Waits for the user to hit enter before exiting
-    cin.ignore();                           //Clears input buffer
-    cin.get();                              //Waits for Enter key
+    // Wait for the user to press Enter before exiting
+    cout << "\nPress Enter to exit...";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Clear the input buffer fully
+    cin.get();  // Wait for Enter key
 
     return 0;
 }
-
-
-
-
