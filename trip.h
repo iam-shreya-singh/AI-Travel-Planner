@@ -1,3 +1,6 @@
+
+//This file will contain the declarations for functions related to trips and some utility functions
+
 #ifndef TRIP_H
 #define TRIP_H
 
@@ -5,28 +8,14 @@
 #include <vector>
 #include <tuple>
 
-// Class to represent a single trip
-class Trip {
-private:
-    std::string destination;
-    std::string travelDate;
-    double budget;
+using namespace std;
 
-public:
-    // Constructors
-    Trip() = default;
-    Trip(const std::string& destination, const std::string& travelDate, double budget);
+// Function declarations
+bool validateDate(const string& date);
+bool validateBudget(double budget);
+string trim(const string& str);
 
-    // Getters
-    std::string getDestination() const;
-    std::string getTravelDate() const;
-    double getBudget() const;
+void loadTrips(vector<tuple<string, string, double>>& trips);
+void saveTrips(const vector<tuple<string, string, double>>& trips);
 
-    // Methods to display and manage trip
-    void displayTripDetails() const;
-
-    // Static method to display all trips
-    static void displayAllTrips(const std::vector<Trip>& trips);
-};
-
-#endif
+#endif // TRIP_H
